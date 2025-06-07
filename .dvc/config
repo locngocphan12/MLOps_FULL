@@ -1,4 +1,4 @@
 [core]
     remote = myremote
 ['remote "myremote"']
-    url = s3://ngocphan12/mlops-data/
+    url = s3://ngocbuckets3/mlops-data/

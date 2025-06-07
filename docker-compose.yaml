@@ -1,0 +1,12 @@
+version: '3.9'
+services:
+  dvc_test:
+    build:
+      context: .
+      dockerfile: dockerfileDVC
+    volumes:
+      - ./.dvc/config.local:/app/.dvc/config.local
+      - ./.dvc/config:/app/.dvc/config
+    working_dir: /app
+    command: >
+      bash -c "dvc pull && ls -lh src/dataset"
