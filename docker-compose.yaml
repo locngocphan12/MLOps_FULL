@@ -10,3 +10,40 @@ services:
     working_dir: /app
     command: >
       bash -c "dvc pull && ls -lh src/dataset"
+      
+  yolov8-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: yolov8-api
+    ports:
+      - "8070:8070"
+    volumes:
+      - ./app:/app
+    restart: always
+
+  mongo:
+    image: mongo:6
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  flask-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.flask
+    container_name: flask-app
+    ports:
+      - "9111:9111"
+    volumes:
+      - ./static:/static
+      - ./templates:/templates
+      - ./app.py:/app.py
+    depends_on:
+      - mongo
+    restart: always
+
+volumes:
+  mongo_data:
