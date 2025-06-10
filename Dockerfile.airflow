@@ -1,0 +1,30 @@
+FROM apache/airflow:slim-2.9.2-python3.10
+
+WORKDIR /app
+
+COPY src /app/src
+
+USER root
+
+# Install system dependencies for OpenCV (cv2)
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
+
+# Install python packages
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir mlflow
+RUN pip install --no-cache-dir ultralytics
+RUN pip install --no-cache-dir psycopg2-binary
+RUN pip install --no-cache-dir dvc[s3]
+
+# Copy các file cần thiết vào container
+COPY .git /app/.git
+COPY .dvcignore /app/.dvcignore
+COPY src/dataset.dvc /app/src/dataset.dvc
+
+RUN mkdir -p /app/src/dataset
