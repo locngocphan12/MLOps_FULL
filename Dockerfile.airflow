@@ -1,8 +1,6 @@
 FROM apache/airflow:slim-2.9.2-python3.10
 
-WORKDIR /app
-
-COPY src /app/src
+COPY src /opt/airflow/app/src
 
 USER root
 
@@ -13,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /app/src/dataset
+RUN mkdir -p /opt/airflow/app/src/dataset
 
 USER airflow
 
@@ -25,8 +23,8 @@ RUN pip install --no-cache-dir psycopg2-binary
 RUN pip install --no-cache-dir dvc[s3]
 
 # Copy các file cần thiết vào container
-COPY .git /app/.git
-COPY .dvcignore /app/.dvcignore
-COPY src/dataset.dvc /app/src/dataset.dvc
+COPY .git /opt/airflow/app/.git
+COPY .dvcignore /opt/airflow/app/.dvcignore
+COPY src/dataset.dvc /opt/airflow/app/src/dataset.dvc
 
 
