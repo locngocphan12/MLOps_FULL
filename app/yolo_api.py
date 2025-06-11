@@ -5,10 +5,26 @@ from ultralytics import YOLO
 import numpy as np
 import cv2
 import io
+import os
+import time
 
 app = FastAPI()
+MODEL_PATH = "runs/detect/best_model.pt"
+MAX_WAIT_TIME = 600  # Tối đa 10 phút chờ (tùy chỉnh theo thời gian training)
+WAIT_INTERVAL = 10   # Kiểm tra mỗi 10 giây
 
-model = YOLO("best_model.pt")
+# Chờ file mô hình sẵn sàng
+def wait_for_model():
+    start_time = time.time()
+    while not os.path.exists(MODEL_PATH):
+        if time.time() - start_time > MAX_WAIT_TIME:
+            raise Exception(f"Timeout waiting for {MODEL_PATH} after {MAX_WAIT_TIME} seconds")
+        print(f"Waiting for {MODEL_PATH}... Retrying in {WAIT_INTERVAL}s")
+        time.sleep(WAIT_INTERVAL)
+    print(f"Model file {MODEL_PATH} is ready!")
+
+wait_for_model()
+model = YOLO(MODEL_PATH)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 

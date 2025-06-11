@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/airflow/app/src/dataset
+RUN mkdir -p /opt/airflow/app/.dvc
+RUN chown -R airflow: /opt/airflow/app/
 
 USER airflow
 
@@ -26,5 +28,6 @@ RUN pip install --no-cache-dir dvc[s3]
 COPY .git /opt/airflow/app/.git
 COPY .dvcignore /opt/airflow/app/.dvcignore
 COPY src/dataset.dvc /opt/airflow/app/src/dataset.dvc
+
 
 

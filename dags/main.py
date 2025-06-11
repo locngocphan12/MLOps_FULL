@@ -38,14 +38,16 @@ def log_dataset_metadata(yaml_path: str) -> dict:
 # Define the function to run DVC pull
 def run_dvc_pull():
     original_dir = os.getcwd()
+    print("project root:", project_root)
+    print("original_dir: ",original_dir)
     # Change working directory to /app where .git and .dvc are located
-    os.chdir('/app')
+    os.chdir('app')
     # Verify current directory for debugging
     print(f"Current working directory: {os.getcwd()}")
     # Run DVC pull command
     os.system('dvc pull')
     # Optional: Check if DVC pull was successful
-    if os.path.exists('/app/src/dataset'):
+    if os.path.exists('./src/dataset'):
         print("DVC pull successful, dataset directory exists")
     else:
         raise Exception("DVC pull failed, dataset directory not found")

@@ -34,6 +34,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     - ${AIRFLOW_PROJ_DIR:-.}/.dvc/config.local:/opt/airflow/app/.dvc/config.local
     - ${AIRFLOW_PROJ_DIR:-.}/.dvc/config:/opt/airflow/app/.dvc/config
+    - ${AIRFLOW_PROJ_DIR:-.}/app/runs:/opt/airflow/runs
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
