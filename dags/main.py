@@ -19,11 +19,11 @@ from app.src.test import evaluate_model
 # MLflow tracking
 MLFLOW_URI = "http://mlflow_server:5000"
 
-default_args = {
-    "start_date": datetime.now(),
-    "retries": 2, 
-    "catchup": False
-}
+# default_args = {
+#     "start_date": datetime.now(),
+#     "retries": 2,
+#     "catchup": False
+# }
 
 def log_dataset_metadata(yaml_path: str) -> dict:
     with open(yaml_path, "r") as f:
@@ -179,10 +179,12 @@ default_args = {
 
 with DAG(
     "lp_yolov8_pipeline",
-    schedule_interval=timedelta(minutes=30), 
+    schedule_interval=timedelta(minutes=30),
     default_args=default_args,
     tags=["yolo", "mlflow"],
     description="License Plate YOLOv8 Pipeline with Airflow",
+    start_date=datetime(2025, 6, 11),
+    catchup=False,
 ) as dag:
     # Task 1: Chạy DVC pull
     dvc_pull_task = PythonOperator(
