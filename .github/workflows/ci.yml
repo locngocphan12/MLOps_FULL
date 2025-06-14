@@ -33,10 +33,10 @@ jobs:
           sudo apt-get install -y docker-compose
 
       - name: Build containers
-        run: docker-compose -f docker-compose.yml build
+        run: docker-compose -f docker-compose.yaml build
 
       - name: Run containers in detached mode
-        run: docker-compose -f docker-compose.yml up -d
+        run: docker-compose -f docker-compose.yaml up -d
 
       - name: Wait for services to be ready
         run: sleep 30
@@ -59,4 +59,4 @@ jobs:
 
       - name: Tear down
         if: always()
-        run: docker-compose -f docker-compose.yml down -v
+        run: docker-compose -f docker-compose.yaml down -v
