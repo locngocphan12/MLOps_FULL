@@ -31,7 +31,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
-
+      - name: Setup .dvc/config.local
+        run: |
+          mkdir -p .dvc
+          echo "${{ secrets.DVC_CONFIG_LOCAL }}" > .dvc/config.local
+          
       - name: Build containers
         run: docker-compose -f docker-compose.yaml build
 
