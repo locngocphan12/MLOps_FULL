@@ -1,0 +1,62 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  docker-compose-ci:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:24
+        options: --privileged
+        ports:
+          - 5000:5000
+          - 8070:8070
+          - 9111:9111
+          - 27017:27017
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build containers
+        run: docker-compose -f docker-compose.yml build
+
+      - name: Run containers in detached mode
+        run: docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for services to be ready
+        run: sleep 30
+
+      - name: Check Airflow Webserver healthcheck
+        run: |
+          curl --fail http://localhost:8080/health || (echo "Webserver not healthy" && exit 1)
+
+      - name: Check Airflow Scheduler healthcheck
+        run: |
+          curl --fail http://localhost:8974/health || (echo "Scheduler not healthy" && exit 1)
+
+      - name: Check Flask API
+        run: |
+          curl --fail http://localhost:9111 || (echo "Flask not responding" && exit 1)
+
+      - name: Check MLflow UI
+        run: |
+          curl --fail http://localhost:5000 || (echo "MLflow not responding" && exit 1)
+
+      - name: Tear down
+        if: always()
+        run: docker-compose -f docker-compose.yml down -v
